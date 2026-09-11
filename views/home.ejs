@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FoodieHub | Food Ordering</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+    <!-- Navbar -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <div class="container">
+
+            <a class="navbar-brand fw-bold" href="/">
+                🍔 FoodieHub
+            </a>
+
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <div
+                class="collapse navbar-collapse"
+                id="navbarNav">
+
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link active"
+                            href="/">
+
+                            Home
+
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="/foods">
+
+                            Menu
+
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="/my-orders">
+
+                            My Orders
+
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+
+                        <a
+                            class="btn btn-warning text-dark px-3"
+                            href="/login">
+
+                            Login
+
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+
+                        <a
+                            class="btn btn-outline-light px-3"
+                            href="/register">
+
+                            Register
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- Hero Section -->
+
+    <section class="py-5 bg-white">
+
+        <div class="container text-center">
+
+            <h1 class="display-5 fw-bold">
+                Delicious Food, Delivered
+            </h1>
+
+            <p class="lead text-muted">
+                Discover your favourite meals from local restaurants.
+            </p>
+
+            <a
+                href="#menu"
+                class="btn btn-success btn-lg">
+
+                Explore Menu
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- Menu -->
+
+    <div
+        class="container py-5"
+        id="menu">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <h2 class="fw-bold mb-0">
+                Our Menu
+            </h2>
+
+            <a
+                href="/foods"
+                class="btn btn-outline-success">
+
+                View All
+
+            </a>
+
+        </div>
+
+
+        <div class="row">
+
+            <% if (foods && foods.length > 0) { %>
+
+                <% foods.forEach(food => { %>
+
+                    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+
+                        <div class="card shadow-sm h-100">
+
+                            <!-- Food Image -->
+
+                            <% if (food.image) { %>
+
+                                <img
+                                    src="/<%= food.image %>"
+                                    class="card-img-top"
+                                    alt="<%= food.name %>"
+                                    style="height: 200px; object-fit: cover;">
+
+                            <% } else { %>
+
+                                <div
+                                    class="d-flex align-items-center justify-content-center bg-secondary text-white"
+                                    style="height: 200px;">
+
+                                    No Image
+
+                                </div>
+
+                            <% } %>
+
+
+                            <div class="card-body d-flex flex-column">
+
+                                <!-- Food Name -->
+
+                                <h5 class="card-title fw-bold">
+
+                                    <%= food.name %>
+
+                                </h5>
+
+
+                                <!-- Category -->
+
+                                <p class="text-muted mb-1">
+
+                                    <%= food.category %>
+
+                                </p>
+
+
+                                <!-- Price -->
+
+                                <h5 class="text-success mb-3">
+
+                                    ₹<%= food.price %>
+
+                                </h5>
+
+
+                                <!-- Admin Controls -->
+
+                                <% if (isAdmin) { %>
+
+                                    <div class="d-flex gap-2 mb-3">
+
+                                        <a
+                                            href="/foods/<%= food._id %>/edit"
+                                            class="btn btn-warning btn-sm w-50">
+
+                                            Edit
+
+                                        </a>
+
+
+                                        <form
+                                            action="/foods/<%= food._id %>/delete"
+                                            method="POST"
+                                            class="w-50"
+                                            onsubmit="return confirm('Delete this food?');">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger btn-sm w-100">
+
+                                                Delete
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                <% } %>
+
+
+                                <!-- Quantity -->
+
+                                <div class="input-group mb-2">
+
+                                    <span class="input-group-text">
+                                        Qty
+                                    </span>
+
+                                    <input
+                                        type="number"
+                                        id="quantity-<%= food._id %>"
+                                        value="1"
+                                        min="1"
+                                        class="form-control"
+                                        required>
+
+                                </div>
+
+
+                                <!-- Add To Cart -->
+
+                                <form
+                                    action="/cart/add"
+                                    method="POST"
+                                    class="mb-2">
+
+                                    <input
+                                        type="hidden"
+                                        name="foodId"
+                                        value="<%= food._id %>">
+
+                                    <input
+                                        type="hidden"
+                                        name="quantity"
+                                        id="cart-quantity-<%= food._id %>"
+                                        value="1">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-outline-success w-100">
+
+                                        Add to Cart
+
+                                    </button>
+
+                                </form>
+
+
+                                <!-- Order Now -->
+
+                                <form
+                                    action="/orders"
+                                    method="POST">
+
+                                    <input
+                                        type="hidden"
+                                        name="foodId"
+                                        value="<%= food._id %>">
+
+                                    <input
+                                        type="hidden"
+                                        name="quantity"
+                                        id="order-quantity-<%= food._id %>"
+                                        value="1">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-success w-100">
+
+                                        Order Now
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Synchronize Quantity -->
+
+                    <script>
+
+                        document
+                            .getElementById("quantity-<%= food._id %>")
+                            .addEventListener("input", function () {
+
+                                document
+                                    .getElementById("cart-quantity-<%= food._id %>")
+                                    .value = this.value;
+
+                                document
+                                    .getElementById("order-quantity-<%= food._id %>")
+                                    .value = this.value;
+
+                            });
+
+                    </script>
+
+                <% }) %>
+
+
+            <% } else { %>
+
+                <div class="col-12">
+
+                    <div class="alert alert-info text-center">
+
+                        <h5>
+                            No food items available yet.
+                        </h5>
+
+                        <p class="mb-0">
+
+                            Food items will appear here once they are added.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+
+    <!-- Footer -->
+
+    <footer class="bg-dark text-white text-center py-3">
+
+        <p class="mb-0">
+
+            © 2026 FoodieHub. All rights reserved.
+
+        </p>
+
+    </footer>
+
+
+    <!-- Bootstrap JS -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</body>
+
+</html>

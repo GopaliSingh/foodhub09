@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Add Food</title>
+
+</head>
+
+<body>
+
+    <h1>Add New Food</h1>
+       <a href="/admin/statistics" class="btn btn-primary">
+    📊 View Statistics
+</a>
+   <form action="/add-food" method="POST" enctype="multipart/form-data">
+
+    <div>
+
+        <label>Food Name</label>
+        <input type="text" name="name" required>
+    </div>
+
+    <div>
+        <label>Price</label>
+        <input type="number" name="price" required>
+    </div>
+
+    <div>
+        <label>Category</label>
+        <select name="category" required>
+            <option value="">Select Category</option>
+            <option value="Pizza">Pizza</option>
+            <option value="Burger">Burger</option>
+            <option value="Biryani">Biryani</option>
+            <option value="Dessert">Dessert</option>
+            <option value="Drinks">Drinks</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Restaurant</label>
+
+        <select name="restaurant" required>
+
+            <option value="">Select Restaurant</option>
+
+            <% restaurants.forEach(restaurant => { %>
+
+                <option value="<%= restaurant._id %>">
+                    <%= restaurant.name %>
+                </option>
+
+            <% }) %>
+
+        </select>
+    </div>
+
+    <div>
+        <label>Food Image</label>
+        <input type="file" name="image">
+    </div>
+
+    <button type="submit">Add Food</button>
+
+</form>
+
+</body>
+
+</html>

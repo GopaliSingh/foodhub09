@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FoodHub Chat</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f5f5f5;
+        }
+
+        .chat-container {
+            width: 500px;
+            max-width: 95%;
+            margin: 40px auto;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: #222;
+            color: white;
+        }
+
+        .messages {
+            height: 400px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #eee;
+        }
+
+        .message strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 10px;
+        }
+
+        #sendButton {
+            padding: 10px 15px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="chat-container">
+
+        <div class="chat-header">
+            <h3>FoodHub Chat</h3>
+            <p>Order: <%= order._id %></p>
+        </div>
+
+
+        <div id="messages" class="messages">
+        </div>
+
+
+        <div class="input-area">
+
+            <input
+                type="text"
+                id="messageInput"
+                placeholder="Type a message..."
+            >
+
+            <button id="sendButton">
+                Send
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- Socket.IO client -->
+    <script src="/socket.io/socket.io.js"></script>
+
+
+    <script>
+
+        // Order ID coming from EJS
+        const orderId = "<%= order._id %>";
+
+
+        // JWT token
+        const token = "<%= token %>";
+
+
+        // Connect to Socket.IO
+        const socket = io({
+            auth: {
+                token: token
+            }
+        });
+
+
+        // ==========================================
+        // JOIN ROOM
+        // ==========================================
+
+        socket.emit(
+            "joinRoom",
+            orderId
+        );
+
+
+        // ==========================================
+        // DISPLAY MESSAGE
+        // ==========================================
+
+        function displayMessage(message) {
+
+            const messagesDiv =
+                document.getElementById("messages");
+
+
+            const messageDiv =
+                document.createElement("div");
+
+            messageDiv.classList.add("message");
+
+
+            messageDiv.innerHTML = `
+                <strong>
+                    ${message.sender?.name || "User"}
+                </strong>
+
+                <span>
+                    ${message.text}
+                </span>
+            `;
+
+
+            messagesDiv.appendChild(
+                messageDiv
+            );
+
+
+            // Automatically scroll down
+            messagesDiv.scrollTop =
+                messagesDiv.scrollHeight;
+        }
+
+
+        // ==========================================
+        // LOAD OLD MESSAGES
+        // ==========================================
+
+        async function loadMessages() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/orders/${orderId}/messages`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (data.success) {
+
+                    data.messages.forEach(
+                        (message) => {
+
+                            displayMessage(
+                                message
+                            );
+
+                        }
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.log(error);
+
+            }
+
+        }
+
+
+        loadMessages();
+
+
+        // ==========================================
+        // SEND MESSAGE
+        // ==========================================
+
+        document
+            .getElementById("sendButton")
+            .addEventListener(
+                "click",
+                sendMessage
+            );
+
+
+        async function sendMessage() {
+
+            const input =
+                document.getElementById(
+                    "messageInput"
+                );
+
+
+            const text =
+                input.value.trim();
+
+
+            if (!text) {
+                return;
+            }
+
+
+            socket.emit(
+                "sendMessage",
+                {
+                    orderId: orderId,
+                    text: text
+                }
+            );
+
+
+            input.value = "";
+
+        }
+
+
+        // ==========================================
+        // RECEIVE MESSAGE
+        // ==========================================
+
+        socket.on(
+            "receiveMessage",
+            (message) => {
+
+                displayMessage(
+                    message
+                );
+
+            }
+        );
+
+
+        // ==========================================
+        // ENTER KEY
+        // ==========================================
+
+        document
+            .getElementById("messageInput")
+            .addEventListener(
+                "keypress",
+                (event) => {
+
+                    if (event.key === "Enter") {
+
+                        sendMessage();
+
+                    }
+
+                }
+            );
+
+
+        // ==========================================
+        // CONNECTION ERROR
+        // ==========================================
+
+        socket.on(
+            "connect_error",
+            (error) => {
+
+                console.log(
+                    "Socket connection error:",
+                    error.message
+                );
+
+            }
+        );
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Food</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        form {
+            width: 400px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 18px;
+            cursor: pointer;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Edit Food</h1>
+
+    <form action="/foods/<%= food._id %>/edit" method="POST">
+
+        <label>Food Name</label>
+        <input
+            type="text"
+            name="name"
+            value="<%= food.name %>"
+            required
+        >
+
+        <label>Price</label>
+        <input
+            type="number"
+            name="price"
+            value="<%= food.price %>"
+            required
+            min="0"
+        >
+
+        <label>Category</label>
+        <input
+            type="text"
+            name="category"
+            value="<%= food.category %>"
+            required
+        >
+
+        <label>Restaurant</label>
+        <select name="restaurant" required>
+
+            <% restaurants.forEach(function(restaurant) { %>
+
+                <option
+                    value="<%= restaurant._id %>"
+                    <%= food.restaurant.toString() === restaurant._id.toString() ? "selected" : "" %>
+                >
+                    <%= restaurant.name %>
+                </option>
+
+            <% }) %>
+
+        </select>
+
+        <button type="submit">
+            Update Food
+        </button>
+
+    </form>
+
+    <a href="/foods">Back to Foods</a>
+
+</body>
+</html>

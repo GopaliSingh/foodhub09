@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Restaurant Orders</title>
+
+</head>
+
+<body>
+
+    <h1>Restaurant Orders</h1>
+
+
+    <% if (orders.length === 0) { %>
+
+        <p>No orders yet.</p>
+
+
+    <% } else { %>
+
+
+        <% orders.forEach(order => { %>
+
+            <div>
+
+                <h2>
+                    <%= order.food.name %>
+                </h2>
+
+
+                <p>
+                    Customer:
+                    <%= order.user.name %>
+                </p>
+
+
+                <p>
+                    Quantity:
+                    <%= order.quantity %>
+                </p>
+
+
+                <p>
+                    Total:
+                    ₹<%= order.total %>
+                </p>
+
+
+                <p>
+                    Current Status:
+                    <%= order.status %>
+                </p>
+
+
+                <!-- UPDATE ORDER STATUS -->
+
+                <form
+                    action="/orders/<%= order._id %>/status"
+                    method="POST"
+                >
+
+                    <select name="status">
+
+                        <option
+                            value="pending"
+                            <%= order.status === "pending" ? "selected" : "" %>
+                        >
+                            Pending
+                        </option>
+
+
+                        <option
+                            value="confirmed"
+                            <%= order.status === "confirmed" ? "selected" : "" %>
+                        >
+                            Confirmed
+                        </option>
+
+
+                        <option
+                            value="preparing"
+                            <%= order.status === "preparing" ? "selected" : "" %>
+                        >
+                            Preparing
+                        </option>
+
+
+                        <option
+                            value="delivered"
+                            <%= order.status === "delivered" ? "selected" : "" %>
+                        >
+                            Delivered
+                        </option>
+
+
+                        <option
+                            value="cancelled"
+                            <%= order.status === "cancelled" ? "selected" : "" %>
+                        >
+                            Cancelled
+                        </option>
+
+                    </select>
+
+
+                    <button type="submit">
+                        Update Status
+                    </button>
+
+                </form>
+
+
+                <!-- CHAT -->
+
+                <p>
+
+                    <a href="/orders/<%= order._id %>/chat">
+
+                        <button type="button">
+                            💬 Chat with Customer
+                        </button>
+
+                    </a>
+
+                </p>
+
+
+                <hr>
+
+            </div>
+
+        <% }) %>
+
+
+    <% } %>
+
+
+</body>
+
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html>
+
+
+
+<head>
+
+    <title>My Cart</title>
+
+    <body>
+<h1>My Cart</h1>
+
+<% if (!cart || cart.items.length === 0) { %>
+
+    <p>Your cart is empty.</p>
+
+<% } else { %>
+
+    <% let total = 0; %>
+
+    <% cart.items.forEach(item => { %>
+
+        <% total += item.food.price * item.quantity; %>
+
+        <div>
+
+            <h2>
+                <%= item.food.name %>
+            </h2>
+
+            <p>
+                Price: ₹<%= item.food.price %>
+            </p>
+
+            <p>
+                Quantity: <%= item.quantity %>
+            </p>
+
+            <p>
+                Subtotal:
+                ₹<%= item.food.price * item.quantity %>
+            </p>
+
+            <form action="/cart/update" method="POST">
+
+                <input
+                    type="hidden"
+                    name="foodId"
+                    value="<%= item.food._id %>"
+                >
+
+                <input
+                    type="number"
+                    name="quantity"
+                    value="<%= item.quantity %>"
+                    min="1"
+                >
+
+                <button type="submit">
+                    Update
+                </button>
+
+            </form>
+
+            <form action="/cart/remove" method="POST">
+
+                <input
+                    type="hidden"
+                    name="foodId"
+                    value="<%= item.food._id %>"
+                >
+
+                <button type="submit">
+                    Remove
+                </button>
+
+            </form>
+
+        </div>
+
+        <hr>
+
+    <% }) %>
+
+    <h2>Total: ₹<%= total %></h2>
+
+    <form action="/checkout" method="POST">
+        <button type="submit">
+            Checkout
+        </button>
+    </form>
+
+<% } %>
+
+    </body>
+
+</html>
