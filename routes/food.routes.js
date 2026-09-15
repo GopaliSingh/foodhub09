@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 const {
@@ -11,20 +12,19 @@ const {
     getCategoryStats
 } = require("../controllers/food.controller");
 
-
-// Get all foods
+// GET ALL FOODS
 router.get("/", getFoods);
 
-// Specific routes MUST come before /:id
+// STATISTICS
 router.get("/stats", getFoodStats);
 router.get("/dashboard-stats", getFoodDashboardStats);
 router.get("/restaurant-stats", getRestaurantStats);
 router.get("/category-stats", getCategoryStats);
 
-// Create food
+// CREATE FOOD
 router.post("/", createFood);
 
-// Get single food by ID
+// GET ONE FOOD
 router.get("/:id", getFood);
 
 module.exports = router;

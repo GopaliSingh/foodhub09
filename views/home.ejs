@@ -2,33 +2,472 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>FoodieHub | Food Ordering</title>
+    <title>FoodieHub | Good Food, Happy You</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
 
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #fafafa;
+            color: #222;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            background: #111827 !important;
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-size: 25px;
+            font-weight: 800;
+            color: white !important;
+        }
+
+        .brand-highlight {
+            color: #ff4b3e;
+        }
+
+        .brand-tagline {
+            display: block;
+            font-size: 10px;
+            color: #cbd5e1;
+            font-weight: 400;
+            margin-top: -5px;
+        }
+
+        .nav-link {
+            color: #e5e7eb !important;
+            margin: 0 10px;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: #ff4b3e !important;
+        }
+
+        .login-btn {
+            border: 1px solid white;
+            border-radius: 25px;
+            padding: 8px 22px !important;
+        }
+
+        .register-btn {
+            background: #ff493d;
+            border-radius: 25px;
+            padding: 9px 22px !important;
+            margin-left: 8px;
+        }
+
+        .register-btn:hover {
+            color: white !important;
+            background: #e63b31;
+        }
+
+        /* ================= HERO ================= */
+
+        .hero {
+            min-height: 350px;
+            background:
+                linear-gradient(90deg,
+                    rgba(0, 0, 0, .90),
+                    rgba(0, 0, 0, .55),
+                    rgba(0, 0, 0, .15)),
+                url("https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1800&q=85");
+
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            line-height: 1.08;
+            font-weight: 800;
+        }
+
+        .hero h1 span {
+            color: #ffb52e;
+        }
+
+        .hero p {
+            font-size: 17px;
+            color: #e5e7eb;
+            margin-top: 18px;
+        }
+
+        /* ================= FILTER BOX ================= */
+
+        .filter-wrapper {
+            margin-top: -40px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .filter-box {
+            background: white;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .15);
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            height: 45px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #ff493d;
+            box-shadow: 0 0 0 3px rgba(255, 73, 61, .1);
+        }
+
+        .search-btn {
+            height: 45px;
+            border: none;
+            border-radius: 10px;
+            background: #ff493d;
+            color: white;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .search-btn:hover {
+            background: #e63b31;
+        }
+
+        .clear-btn {
+            margin-top: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        /* ================= CATEGORY ================= */
+
+        .categories {
+            padding: 35px 0 20px;
+        }
+
+        .category-item {
+            text-align: center;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .category-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .category-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: #fff0ed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            margin: auto;
+        }
+
+        .category-item p {
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* ================= SECTION ================= */
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .section-subtitle {
+            color: #777;
+            font-size: 13px;
+        }
+
+        /* ================= FOOD CARD ================= */
+
+        .food-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, .09);
+            height: 100%;
+            transition: .25s;
+        }
+
+        .food-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, .15);
+        }
+
+        .food-image {
+            height: 185px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .food-body {
+            padding: 15px;
+        }
+
+        .food-name {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: capitalize;
+            margin-bottom: 5px;
+        }
+
+        .rating {
+            color: #f59e0b;
+            font-size: 13px;
+        }
+
+        .category-text {
+            font-size: 12px;
+            color: #777;
+            margin: 5px 0;
+        }
+
+        .restaurant-name {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .price {
+            font-size: 17px;
+            font-weight: 700;
+            color: #159447;
+        }
+
+        .cart-btn {
+            width: 100%;
+            border: none;
+            background: #ff493d;
+            color: white;
+            border-radius: 9px;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .cart-btn:hover {
+            background: #e63b31;
+        }
+
+        /* ================= CUSTOMER ACTIONS ================= */
+
+        .customer-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .customer-actions form {
+            flex: 1;
+            margin: 0;
+        }
+
+        .order-btn {
+            width: 100%;
+            border: none;
+            background: #198754;
+            color: white;
+            border-radius: 9px;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .order-btn:hover {
+            background: #157347;
+        }
+
+        /* ================= ADMIN ACTIONS ================= */
+
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .admin-actions form {
+            flex: 1;
+            margin: 0;
+        }
+
+        .edit-btn,
+        .delete-btn {
+            flex: 1;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            padding: 9px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #222;
+        }
+
+        .edit-btn:hover {
+            background: #e0a800;
+            color: #222;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #bb2d3b;
+        }
+
+        /* ================= EMPTY ================= */
+
+        .empty-box {
+            text-align: center;
+            padding: 70px 20px;
+            color: #777;
+        }
+
+        .empty-box h4 {
+            color: #333;
+            font-weight: 700;
+        }
+
+        /* ================= FEATURES ================= */
+
+        .features {
+            margin-top: 45px;
+            margin-bottom: 40px;
+            background: #fff2ef;
+            border-radius: 20px;
+            padding: 22px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feature-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .feature-title {
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .feature-text {
+            font-size: 11px;
+            color: #777;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            background: #111827;
+            color: white;
+            padding: 25px 0;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        footer p {
+            margin: 0;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        @media(max-width: 768px) {
+
+            .hero h1 {
+                font-size: 38px;
+            }
+
+            .filter-wrapper {
+                margin-top: 20px;
+            }
+
+            .hero {
+                min-height: 400px;
+            }
+
+            .nav-link {
+                margin: 5px 0;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
-    <!-- Navbar -->
+    <!-- ================= NAVBAR ================= -->
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark">
 
         <div class="container">
 
-            <a class="navbar-brand fw-bold" href="/">
-                🍔 FoodieHub
+            <a class="navbar-brand" href="/">
+                🍔 Foodie<span class="brand-highlight">Hub</span>
+                <span class="brand-tagline">Good Food · Happy You</span>
             </a>
 
-            <button
-                class="navbar-toggler"
+            <button class="navbar-toggler"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#navbarNav">
@@ -37,72 +476,65 @@
 
             </button>
 
-            <div
-                class="collapse navbar-collapse"
-                id="navbarNav">
+            <div class="collapse navbar-collapse" id="navbarNav">
 
                 <ul class="navbar-nav ms-auto align-items-lg-center">
 
                     <li class="nav-item">
-
-                        <a
-                            class="nav-link active"
-                            href="/">
-
-                            Home
-
+                        <a class="nav-link" href="/">
+                            🏠 Home
                         </a>
-
                     </li>
 
                     <li class="nav-item">
-
-                        <a
-                            class="nav-link"
-                            href="/foods">
-
-                            Menu
-
+                        <a class="nav-link" href="#foods">
+                            🍴 Menu
                         </a>
-
                     </li>
+
+        <% if (isLoggedIn && !isAdminUser) { %>
+    <li class="nav-item">
+        <a class="nav-link" href="/cart">
+            🛒 Cart
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="/my-orders">
+            My Orders 👥
+        </a>
+    </li>
+<% } %>
+                         <li class="nav-item">
+    <a class="nav-link" href="/restaurant-orders">
+              Restaurant Orders 🍽
+    </a>
+</li>
+
 
                     <li class="nav-item">
+    <a class="nav-link" href="/restaurant/dashboard">
+        🏪 Restaurant Dashboard
+    </a>
+</li>
 
-                        <a
-                            class="nav-link"
-                            href="/my-orders">
-
-                            My Orders
-
-                        </a>
-
-                    </li>
-
-                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-
-                        <a
-                            class="btn btn-warning text-dark px-3"
-                            href="/login">
-
+                    <li class="nav-item">
+                        <a class="nav-link login-btn" href="/login">
                             Login
-
                         </a>
-
                     </li>
 
-                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-
-                        <a
-                            class="btn btn-outline-light px-3"
-                            href="/register">
-
+                    <li class="nav-item">
+                        <a class="nav-link register-btn" href="/register">
                             Register
-
                         </a>
-
+  
                     </li>
-
+                    <li class="nav-item">
+                        <a class="nav-link login-btn" href="/profile">
+                            Profile
+                        </a>
+                    </li>
                 </ul>
 
             </div>
@@ -112,145 +544,281 @@
     </nav>
 
 
-    <!-- Hero Section -->
+    <!-- ================= HERO ================= -->
 
-    <section class="py-5 bg-white">
+    <section class="hero">
 
-        <div class="container text-center">
+        <div class="container">
 
-            <h1 class="display-5 fw-bold">
-                Delicious Food, Delivered
-            </h1>
+            <div class="hero-content">
 
-            <p class="lead text-muted">
-                Discover your favourite meals from local restaurants.
-            </p>
+                <h1>
+                    Delicious Food
+                    <br>
+                    For <span>Every Mood</span>
+                </h1>
 
-            <a
-                href="#menu"
-                class="btn btn-success btn-lg">
+                <p>
+                    Discover amazing food from your favourite restaurants.
+                    Search, filter and find your food in seconds!
+                </p>
 
-                Explore Menu
-
-            </a>
+            </div>
 
         </div>
 
     </section>
 
 
-    <!-- Menu -->
+    <!-- ================= FILTER ================= -->
 
-    <div
-        class="container py-5"
-        id="menu">
+<div class="container filter-wrapper">
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="filter-box">
 
-            <h2 class="fw-bold mb-0">
-                Our Menu
-            </h2>
+        <div class="row g-3 align-items-end">
 
-            <a
-                href="/foods"
-                class="btn btn-outline-success">
+            <div class="col-lg-3 col-md-6">
+                <div class="filter-label">🔍 Search Food</div>
+                <input
+                    type="text"
+                    id="searchInput"
+                    class="form-control"
+                    placeholder="e.g. pizza">
+            </div>
 
-                View All
+            <div class="col-lg-2 col-md-6">
+                <div class="filter-label">📂 Category</div>
+                <select id="categoryInput" class="form-select">
+                    <option value="">All Categories</option>
+                    <option value="Pizza">🍕 Pizza</option>
+                    <option value="Burger">🍔 Burger</option>
+                    <option value="Dessert">🍰 Dessert</option>
+                    <option value="Drinks">🥤 Drinks</option>
+                    <option value="Chinese">🥡 Chinese</option>
+                    <option value="Indian">🍛 Indian</option>
+                </select>
+            </div>
 
-            </a>
+            <div class="col-lg-2 col-md-6">
+                <div class="filter-label">₹ Min Price</div>
+                <input
+                    type="number"
+                    id="minPriceInput"
+                    class="form-control"
+                    placeholder="Min"
+                    min="0">
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <div class="filter-label">₹ Max Price</div>
+                <input
+                    type="number"
+                    id="maxPriceInput"
+                    class="form-control"
+                    placeholder="Max"
+                    min="0">
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <div class="filter-label">↕ Sort</div>
+                <select id="sortInput" class="form-select">
+                    <option value="">Default</option>
+                    <option value="price">Price: Low to High</option>
+                </select>
+            </div>
+
+            <div class="col-lg-1 col-md-6">
+                <button
+                    class="search-btn"
+                    type="button"
+                    id="applyFilters">
+                    🔍
+                </button>
+            </div>
 
         </div>
 
+        <button
+            type="button"
+            id="clearFilters"
+            class="btn btn-outline-secondary clear-btn">
+            Clear Filters
+        </button>
 
-        <div class="row">
+    </div>
+
+</div>
+
+
+<!-- ================= CATEGORIES ================= -->
+
+<section class="categories">
+
+    <div class="container">
+
+        <div class="row justify-content-center g-4">
+
+            <div class="col-4 col-md-2">
+                <div class="category-item category-filter" data-category="">
+                    <div class="category-icon">🍽️</div>
+                    <p>All</p>
+                </div>
+            </div>
+
+            <div class="col-4 col-md-2">
+                <div class="category-item category-filter" data-category="Pizza">
+                    <div class="category-icon">🍕</div>
+                    <p>Pizza</p>
+                </div>
+            </div>
+
+            <div class="col-4 col-md-2">
+                <div class="category-item category-filter" data-category="Burger">
+                    <div class="category-icon">🍔</div>
+                    <p>Burger</p>
+                </div>
+            </div>
+
+            <div class="col-4 col-md-2">
+                <div class="category-item category-filter" data-category="Dessert">
+                    <div class="category-icon">🍰</div>
+                    <p>Dessert</p>
+                </div>
+            </div>
+
+            <div class="col-4 col-md-2">
+                <div class="category-item category-filter" data-category="Drinks">
+                    <div class="category-icon">🥤</div>
+                    <p>Drinks</p>
+                </div>
+            </div>
+
+            <div class="col-4 col-md-2">
+                <div class="category-item category-filter" data-category="Chinese">
+                    <div class="category-icon">🥡</div>
+                    <p>Chinese</p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FOODS ================= -->
+
+<section id="foods" class="pb-4">
+
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-title">🔥 Available Foods</div>
+                <div class="section-subtitle">
+                    Discover something delicious today
+                </div>
+            </div>
+
+            <div id="foodCount" class="section-subtitle"></div>
+        </div>
+
+        <div class="row g-4" id="foodContainer">
 
             <% if (foods && foods.length > 0) { %>
 
                 <% foods.forEach(food => { %>
 
-                    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="col-xl-3 col-lg-4 col-md-6">
 
-                        <div class="card shadow-sm h-100">
+                        <div class="food-card">
 
-                            <!-- Food Image -->
+                            <img
+                                src="<%= food.image %>"
+                                class="food-image"
+                                alt="<%= food.name %>">
 
-                            <% if (food.image) { %>
+                            <div class="food-body">
 
-                                <img
-                                    src="/<%= food.image %>"
-                                    class="card-img-top"
-                                    alt="<%= food.name %>"
-                                    style="height: 200px; object-fit: cover;">
-
-                            <% } else { %>
-
-                                <div
-                                    class="d-flex align-items-center justify-content-center bg-secondary text-white"
-                                    style="height: 200px;">
-
-                                    No Image
-
+                                <div class="food-name">
+                                    <%= food.name %>
                                 </div>
 
-                            <% } %>
+                                <div class="rating">
+                                    ⭐ 4.5
+                                </div>
 
+                                <div class="category-text">
+                                    Category:
+                                    <strong><%= food.category %></strong>
+                                </div>
 
-                            <div class="card-body d-flex flex-column">
+                                <div class="restaurant-name">
+                                    🏪
+                                    <% if (food.restaurant) { %>
+                                        <%= food.restaurant.name || "Restaurant" %>
+                                    <% } else { %>
+                                        Restaurant
+                                    <% } %>
+                                </div>
 
-                                <!-- Food Name -->
-
-                                <h5 class="card-title fw-bold">
-
-                                    <%= food.name %>
-
-                                </h5>
-
-
-                                <!-- Category -->
-
-                                <p class="text-muted mb-1">
-
-                                    <%= food.category %>
-
-                                </p>
-
-
-                                <!-- Price -->
-
-                                <h5 class="text-success mb-3">
-
+                                <div class="price">
                                     ₹<%= food.price %>
+                                </div>
 
-                                </h5>
+                                <% if (isLoggedIn) { %>
 
+                                    <div class="customer-actions">
 
-                                <!-- Admin Controls -->
+                                        <form action="/cart/add" method="POST">
+                                            <input
+                                                type="hidden"
+                                                name="foodId"
+                                                value="<%= food._id %>">
 
-                                <% if (isAdmin) { %>
+                                            <button
+                                                class="cart-btn"
+                                                type="submit">
+                                                🛒 Add to Cart
+                                            </button>
+                                        </form>
 
-                                    <div class="d-flex gap-2 mb-3">
+    
+
+                                    </div>
+
+                                <% } else { %>
+
+                                    <button
+                                        class="cart-btn"
+                                        type="button"
+                                        onclick="alert('Please login to order food')">
+                                        🛒 Add to Cart
+                                    </button>
+
+                                <% } %>
+
+                                <% if (isAdminUser) { %>
+
+                                    <div class="admin-actions">
 
                                         <a
                                             href="/foods/<%= food._id %>/edit"
-                                            class="btn btn-warning btn-sm w-50">
-
-                                            Edit
-
+                                            class="edit-btn">
+                                            ✏️ Edit
                                         </a>
-
 
                                         <form
                                             action="/foods/<%= food._id %>/delete"
                                             method="POST"
-                                            class="w-50"
-                                            onsubmit="return confirm('Delete this food?');">
+                                            onsubmit="return confirm('Are you sure you want to delete this food?');">
 
                                             <button
                                                 type="submit"
-                                                class="btn btn-danger btn-sm w-100">
-
-                                                Delete
-
+                                                class="delete-btn">
+                                                🗑️ Delete
                                             </button>
 
                                         </form>
@@ -259,156 +827,452 @@
 
                                 <% } %>
 
-
-                                <!-- Quantity -->
-
-                                <div class="input-group mb-2">
-
-                                    <span class="input-group-text">
-                                        Qty
-                                    </span>
-
-                                    <input
-                                        type="number"
-                                        id="quantity-<%= food._id %>"
-                                        value="1"
-                                        min="1"
-                                        class="form-control"
-                                        required>
-
-                                </div>
-
-
-                                <!-- Add To Cart -->
-
-                                <form
-                                    action="/cart/add"
-                                    method="POST"
-                                    class="mb-2">
-
-                                    <input
-                                        type="hidden"
-                                        name="foodId"
-                                        value="<%= food._id %>">
-
-                                    <input
-                                        type="hidden"
-                                        name="quantity"
-                                        id="cart-quantity-<%= food._id %>"
-                                        value="1">
-
-                                    <button
-                                        type="submit"
-                                        class="btn btn-outline-success w-100">
-
-                                        Add to Cart
-
-                                    </button>
-
-                                </form>
-
-
-                                <!-- Order Now -->
-
-                                <form
-                                    action="/orders"
-                                    method="POST">
-
-                                    <input
-                                        type="hidden"
-                                        name="foodId"
-                                        value="<%= food._id %>">
-
-                                    <input
-                                        type="hidden"
-                                        name="quantity"
-                                        id="order-quantity-<%= food._id %>"
-                                        value="1">
-
-                                    <button
-                                        type="submit"
-                                        class="btn btn-success w-100">
-
-                                        Order Now
-
-                                    </button>
-
-                                </form>
-
                             </div>
 
                         </div>
 
                     </div>
 
-
-                    <!-- Synchronize Quantity -->
-
-                    <script>
-
-                        document
-                            .getElementById("quantity-<%= food._id %>")
-                            .addEventListener("input", function () {
-
-                                document
-                                    .getElementById("cart-quantity-<%= food._id %>")
-                                    .value = this.value;
-
-                                document
-                                    .getElementById("order-quantity-<%= food._id %>")
-                                    .value = this.value;
-
-                            });
-
-                    </script>
-
                 <% }) %>
-
 
             <% } else { %>
 
                 <div class="col-12">
-
-                    <div class="alert alert-info text-center">
-
-                        <h5>
-                            No food items available yet.
-                        </h5>
-
-                        <p class="mb-0">
-
-                            Food items will appear here once they are added.
-
-                        </p>
-
+                    <div class="empty-box">
+                        <div style="font-size:55px;">🍽️</div>
+                        <h4>No food found</h4>
+                        <p>Try changing your search or filters.</p>
                     </div>
-
                 </div>
 
             <% } %>
 
         </div>
 
+        <div
+            id="noResults"
+            class="empty-box"
+            style="display:none;">
+
+            <div style="font-size:55px;">🍽️</div>
+            <h4>No food found</h4>
+            <p>Try changing your search or filters.</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FEATURES ================= -->
+
+    <div class="container">
+
+        <div class="features">
+
+            <div class="row g-4">
+
+                <div class="col-md-3">
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            🛵
+                        </div>
+
+                        <div>
+                            <div class="feature-title">
+                                Fast Delivery
+                            </div>
+
+                            <div class="feature-text">
+                                Fresh food delivered quickly
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            🔒
+                        </div>
+
+                        <div>
+                            <div class="feature-title">
+                                Secure
+                            </div>
+
+                            <div class="feature-text">
+                                Your data is protected
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            🍴
+                        </div>
+
+                        <div>
+                            <div class="feature-title">
+                                Wide Variety
+                            </div>
+
+                            <div class="feature-text">
+                                Multiple food categories
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            💬
+                        </div>
+
+                        <div>
+                            <div class="feature-title">
+                                Easy to Use
+                            </div>
+
+                            <div class="feature-text">
+                                Simple food discovery
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 
-    <!-- Footer -->
+    <!-- ================= FOOTER ================= -->
 
-    <footer class="bg-dark text-white text-center py-3">
+    <footer>
 
-        <p class="mb-0">
+        <div class="container">
 
-            © 2026 FoodieHub. All rights reserved.
+            <p>
+                🍔 <strong>FoodieHub</strong> — Good Food · Happy You
+            </p>
 
-        </p>
+        </div>
 
     </footer>
 
 
-    <!-- Bootstrap JS -->
+    <script>
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+    const searchInput = document.getElementById("searchInput");
+    const categoryInput = document.getElementById("categoryInput");
+    const minPriceInput = document.getElementById("minPriceInput");
+    const maxPriceInput = document.getElementById("maxPriceInput");
+    const sortInput = document.getElementById("sortInput");
+    const foodContainer = document.getElementById("foodContainer");
+    const noResults = document.getElementById("noResults");
+    const foodCount = document.getElementById("foodCount");
+
+    const userIsLoggedIn = <%= isLoggedIn ? "true" : "false" %>;
+    const userIsAdmin = <%= isAdminUser ? "true" : "false" %>;
+
+    async function loadFoods(categoryFromButton = null) {
+
+        try {
+
+            foodContainer.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border" role="status"></div>
+                    <p class="mt-2">Loading foods...</p>
+                </div>
+            `;
+
+            noResults.style.display = "none";
+
+            const params = new URLSearchParams();
+
+            const search = searchInput.value.trim();
+
+            const category =
+                categoryFromButton !== null
+                    ? categoryFromButton
+                    : categoryInput.value;
+
+            const minPrice = minPriceInput.value;
+            const maxPrice = maxPriceInput.value;
+            const sort = sortInput.value;
+
+            if (search) params.append("search", search);
+            if (category) params.append("category", category);
+            if (minPrice) params.append("minPrice", minPrice);
+            if (maxPrice) params.append("maxPrice", maxPrice);
+            if (sort) params.append("sort", sort);
+
+            // Ask the existing /foods API for filtered data.
+            // The URL in the browser address bar does NOT change.
+            const response = await fetch("/foods?" + params.toString() + (params.toString() ? "&" : "") + "limit=100");
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || "Unable to load foods");
+            }
+
+            displayFoods(result.data || []);
+
+        } catch (error) {
+
+            console.error("Food filter error:", error);
+
+            foodContainer.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-danger">
+                        Unable to load foods. Please try again.
+                    </div>
+                </div>
+            `;
+
+            foodCount.textContent = "";
+
+        }
+
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    function displayFoods(foods) {
+
+        foodContainer.innerHTML = "";
+
+        foodCount.textContent =
+            `${foods.length} food(s) found`;
+
+        if (!foods.length) {
+
+            noResults.style.display = "block";
+
+            return;
+
+        }
+
+        noResults.style.display = "none";
+
+        foods.forEach(food => {
+
+            const restaurantName =
+                food.restaurant
+                    ? food.restaurant.name || "Restaurant"
+                    : "Restaurant";
+
+            const card = document.createElement("div");
+
+            card.className =
+                "col-xl-3 col-lg-4 col-md-6";
+
+            card.innerHTML = `
+
+                <div class="food-card">
+
+                    <img
+                        src="${escapeHtml(food.image || "")}"
+                        class="food-image"
+                        alt="${escapeHtml(food.name)}">
+
+                    <div class="food-body">
+
+                        <div class="food-name">
+                            ${escapeHtml(food.name)}
+                        </div>
+
+                        <div class="rating">
+                            ⭐ 4.5
+                        </div>
+
+                        <div class="category-text">
+                            Category:
+                            <strong>
+                                ${escapeHtml(food.category || "")}
+                            </strong>
+                        </div>
+
+                        <div class="restaurant-name">
+                            🏪 ${escapeHtml(restaurantName)}
+                        </div>
+
+                        <div class="price">
+                            ₹${escapeHtml(food.price)}
+                        </div>
+
+                        ${userIsLoggedIn
+                            ? `
+                                <div class="customer-actions">
+
+                                    <form action="/cart/add" method="POST">
+                                        <input
+                                            type="hidden"
+                                            name="foodId"
+                                            value="${escapeHtml(food._id)}">
+
+                                        <button
+                                            class="cart-btn"
+                                            type="submit">
+                                            🛒 Add to Cart
+                                        </button>
+                                    </form>
+
+                                </div>
+                              `
+                            : `
+                                <button
+                                    class="cart-btn"
+                                    type="button"
+                                    onclick="alert('Please login to order food')">
+                                    🛒 Add to Cart
+                                </button>
+                              `
+                        }
+
+                        ${userIsAdmin
+                            ? `
+                                <div class="admin-actions">
+
+                                    <a
+                                        href="/foods/${escapeHtml(food._id)}/edit"
+                                        class="edit-btn">
+                                        ✏️ Edit
+                                    </a>
+
+                                    <form
+                                        action="/foods/${escapeHtml(food._id)}/delete"
+                                        method="POST"
+                                        onsubmit="return confirm('Are you sure you want to delete this food?');">
+
+                                        <button
+                                            type="submit"
+                                            class="delete-btn">
+                                            🗑️ Delete
+                                        </button>
+
+                                    </form>
+
+                                </div>
+                              `
+                            : ""
+                        }
+
+                    </div>
+
+                </div>
+            `;
+
+            foodContainer.appendChild(card);
+
+        });
+
+    }
+
+
+    // Apply filters button
+    document
+        .getElementById("applyFilters")
+        .addEventListener("click", () => {
+            loadFoods();
+        });
+
+
+    // Category buttons
+    document
+        .querySelectorAll(".category-filter")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const category =
+                    button.dataset.category;
+
+                categoryInput.value = category;
+
+                loadFoods(category);
+
+                document
+                    .getElementById("foods")
+                    .scrollIntoView({
+                        behavior: "smooth"
+                    });
+
+            });
+
+        });
+
+
+    // Clear filters
+    document
+        .getElementById("clearFilters")
+        .addEventListener("click", () => {
+
+            searchInput.value = "";
+            categoryInput.value = "";
+            minPriceInput.value = "";
+            maxPriceInput.value = "";
+            sortInput.value = "";
+
+            loadFoods();
+
+        });
+
+
+    // Search when Enter is pressed
+    searchInput.addEventListener("keydown", event => {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            loadFoods();
+
+        }
+
+    });
+
+</script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
     </script>
 
 </body>

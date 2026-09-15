@@ -1,140 +1,681 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 
 <head>
 
-    <title>Restaurant Orders</title>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Restaurant Orders | FoodieHub</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+        }
+
+        .navbar-brand {
+            font-size: 1.35rem;
+        }
+
+        /* Page Header */
+
+        .page-header {
+            margin-top: 20px;
+            margin-bottom: 35px;
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            color: #212529;
+        }
+
+        .page-header p {
+            color: #6c757d;
+        }
+
+        /* Order Card */
+
+        .order-card {
+            border: none;
+            border-radius: 18px;
+            overflow: hidden;
+            transition: 0.25s ease;
+            background: #ffffff;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12) !important;
+        }
+
+        .order-card .card-body {
+            padding: 24px;
+        }
+
+        /* Food Header */
+
+        .food-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: #212529;
+        }
+
+        .food-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: #fff3cd;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-right: 10px;
+        }
+
+        /* Order Information */
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #212529;
+            text-align: right;
+        }
+
+        .price {
+            color: #198754;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        /* Status */
+
+        .status-badge {
+            text-transform: capitalize;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+        }
+
+        /* Update section */
+
+        .status-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .status-section label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .status-section select {
+            border-radius: 10px;
+        }
+
+        .update-btn {
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Chat */
+
+        .chat-btn {
+            border-radius: 10px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        /* Empty State */
+
+        .empty-state {
+            background: white;
+            border-radius: 18px;
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+
+        footer {
+            margin-top: auto;
+        }
+
+        /* Mobile */
+
+        @media (max-width: 576px) {
+
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-    <h1>Restaurant Orders</h1>
+
+    <!-- ========================= -->
+    <!-- NAVBAR -->
+    <!-- ========================= -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <div class="container">
+
+            <a
+                class="navbar-brand fw-bold"
+                href="/"
+            >
+                🍔 FoodieHub
+            </a>
 
 
-    <% if (orders.length === 0) { %>
+            <div class="ms-auto">
 
-        <p>No orders yet.</p>
-
-
-    <% } else { %>
-
-
-        <% orders.forEach(order => { %>
-
-            <div>
-
-                <h2>
-                    <%= order.food.name %>
-                </h2>
-
-
-                <p>
-                    Customer:
-                    <%= order.user.name %>
-                </p>
-
-
-                <p>
-                    Quantity:
-                    <%= order.quantity %>
-                </p>
-
-
-                <p>
-                    Total:
-                    ₹<%= order.total %>
-                </p>
-
-
-                <p>
-                    Current Status:
-                    <%= order.status %>
-                </p>
-
-
-                <!-- UPDATE ORDER STATUS -->
-
-                <form
-                    action="/orders/<%= order._id %>/status"
-                    method="POST"
+                <a
+                    href="/"
+                    class="btn btn-outline-light me-2"
                 >
+                    Home
+                </a>
 
-                    <select name="status">
+                <a
+                    href="/restaurant-dashboard"
+                    class="btn btn-outline-light me-2"
+                >
+                    Dashboard
+                </a>
 
-                        <option
-                            value="pending"
-                            <%= order.status === "pending" ? "selected" : "" %>
-                        >
-                            Pending
-                        </option>
+                <a
+                    href="/profile"
+                    class="btn btn-outline-light me-2"
+                >
+                    Profile
+                </a>
 
-
-                        <option
-                            value="confirmed"
-                            <%= order.status === "confirmed" ? "selected" : "" %>
-                        >
-                            Confirmed
-                        </option>
-
-
-                        <option
-                            value="preparing"
-                            <%= order.status === "preparing" ? "selected" : "" %>
-                        >
-                            Preparing
-                        </option>
-
-
-                        <option
-                            value="delivered"
-                            <%= order.status === "delivered" ? "selected" : "" %>
-                        >
-                            Delivered
-                        </option>
-
-
-                        <option
-                            value="cancelled"
-                            <%= order.status === "cancelled" ? "selected" : "" %>
-                        >
-                            Cancelled
-                        </option>
-
-                    </select>
-
-
-                    <button type="submit">
-                        Update Status
-                    </button>
-
-                </form>
-
-
-                <!-- CHAT -->
-
-                <p>
-
-                    <a href="/orders/<%= order._id %>/chat">
-
-                        <button type="button">
-                            💬 Chat with Customer
-                        </button>
-
-                    </a>
-
-                </p>
-
-
-                <hr>
+                <a
+                    href="/logout"
+                    class="btn btn-danger"
+                >
+                    Logout
+                </a>
 
             </div>
 
-        <% }) %>
+        </div>
+
+    </nav>
 
 
-    <% } %>
+
+    <!-- ========================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================= -->
+
+    <main class="container py-5">
+
+
+        <!-- PAGE HEADER -->
+
+        <div class="page-header text-center">
+
+            <h1>
+                📦 Restaurant Orders
+            </h1>
+
+            <p class="mb-0">
+                Manage orders placed at your restaurant
+            </p>
+
+        </div>
+
+
+
+        <!-- ========================= -->
+        <!-- NO ORDERS -->
+        <!-- ========================= -->
+
+        <% if (!orders || orders.length === 0) { %>
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    🍽️
+                </div>
+
+                <h3 class="fw-bold">
+                    No Orders Yet
+                </h3>
+
+                <p class="text-muted mb-0">
+                    Orders from your customers will appear here.
+                </p>
+
+            </div>
+
+
+        <% } else { %>
+
+
+            <!-- ========================= -->
+            <!-- ORDER CARDS -->
+            <!-- ========================= -->
+
+            <div class="row g-4">
+
+
+                <% orders.forEach(order => { %>
+
+
+                    <div class="col-md-6 col-lg-4">
+
+
+                        <div class="card order-card shadow-sm h-100">
+
+
+                            <div class="card-body">
+
+
+                                <!-- FOOD -->
+
+                                <div class="food-title">
+
+                                    <span class="food-icon">
+                                        🍔
+                                    </span>
+
+                                    <% if (order.food) { %>
+
+                                        <%= order.food.name %>
+
+                                    <% } else { %>
+
+                                        Food unavailable
+
+                                    <% } %>
+
+                                </div>
+
+
+
+                                <!-- CUSTOMER -->
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        👤 Customer
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        <% if (order.user) { %>
+
+                                            <%= order.user.name %>
+
+                                        <% } else { %>
+
+                                            Unknown Customer
+
+                                        <% } %>
+
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- EMAIL -->
+
+                                <% if (order.user && order.user.email) { %>
+
+                                    <div class="info-row">
+
+                                        <span class="info-label">
+                                            ✉️ Email
+                                        </span>
+
+                                        <span class="info-value">
+                                            <%= order.user.email %>
+                                        </span>
+
+                                    </div>
+
+                                <% } %>
+
+
+
+                                <!-- QUANTITY -->
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        🔢 Quantity
+                                    </span>
+
+                                    <span class="info-value">
+                                        <%= order.quantity %>
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- TOTAL -->
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        💰 Total
+                                    </span>
+
+                                    <span class="price">
+                                        ₹<%= order.total %>
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- PAYMENT STATUS -->
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        💳 Payment
+                                    </span>
+
+
+                                    <span>
+
+                                        <% if (order.paymentStatus === "paid") { %>
+
+                                            <span class="badge bg-success status-badge">
+                                                Paid
+                                            </span>
+
+                                        <% } else if (order.paymentStatus === "failed") { %>
+
+                                            <span class="badge bg-danger status-badge">
+                                                Failed
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="badge bg-warning text-dark status-badge">
+                                                Pending
+                                            </span>
+
+                                        <% } %>
+
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- CURRENT ORDER STATUS -->
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        📋 Order Status
+                                    </span>
+
+
+                                    <span>
+
+                                        <% if (order.status === "pending") { %>
+
+                                            <span class="badge bg-warning text-dark status-badge">
+                                                Pending
+                                            </span>
+
+                                        <% } else if (order.status === "confirmed") { %>
+
+                                            <span class="badge bg-primary status-badge">
+                                                Confirmed
+                                            </span>
+
+                                        <% } else if (order.status === "preparing") { %>
+
+                                            <span class="badge bg-info text-dark status-badge">
+                                                Preparing
+                                            </span>
+
+                                        <% } else if (order.status === "delivered") { %>
+
+                                            <span class="badge bg-success status-badge">
+                                                Delivered
+                                            </span>
+
+                                        <% } else if (order.status === "cancelled") { %>
+
+                                            <span class="badge bg-danger status-badge">
+                                                Cancelled
+                                            </span>
+
+                                        <% } else { %>
+
+                                            <span class="badge bg-secondary status-badge">
+                                                <%= order.status %>
+                                            </span>
+
+                                        <% } %>
+
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- ========================= -->
+                                <!-- UPDATE STATUS -->
+                                <!-- ========================= -->
+
+                                <% if (
+                                    order.status !== "delivered" &&
+                                    order.status !== "cancelled"
+                                ) { %>
+
+
+                                    <div class="status-section">
+
+                                        <form
+                                            action="/orders/<%= order._id %>/status"
+                                            method="POST"
+                                        >
+
+                                            <label for="status-<%= order._id %>">
+                                                Update Order Status
+                                            </label>
+
+
+                                            <select
+                                                id="status-<%= order._id %>"
+                                                name="status"
+                                                class="form-select mb-3"
+                                                required
+                                            >
+
+
+                                                <% if (order.status === "pending") { %>
+
+                                                    <option value="confirmed">
+                                                        Confirm Order
+                                                    </option>
+
+                                                    <option value="cancelled">
+                                                        Cancel Order
+                                                    </option>
+
+                                                <% } %>
+
+
+
+                                                <% if (order.status === "confirmed") { %>
+
+                                                    <option value="preparing">
+                                                        Start Preparing
+                                                    </option>
+
+                                                <% } %>
+
+
+
+                                                <% if (order.status === "preparing") { %>
+
+                                                    <option value="delivered">
+                                                        Mark as Delivered
+                                                    </option>
+
+                                                <% } %>
+
+
+                                            </select>
+
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-primary w-100 update-btn"
+                                            >
+                                                🔄 Update Status
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+
+                                <% } else { %>
+
+
+                                    <div class="alert
+                                        <%= order.status === 'delivered'
+                                            ? 'alert-success'
+                                            : 'alert-danger'
+                                        %>
+                                        text-center mt-3 mb-0 py-2"
+                                    >
+
+                                        <% if (order.status === "delivered") { %>
+
+                                            ✅ Order Delivered
+
+                                        <% } else { %>
+
+                                            ❌ Order Cancelled
+
+                                        <% } %>
+
+                                    </div>
+
+
+                                <% } %>
+
+
+
+                                <!-- ========================= -->
+                                <!-- CHAT -->
+                                <!-- ========================= -->
+
+                                <a
+                                    href="/orders/<%= order._id %>/chat"
+                                    class="btn btn-outline-primary w-100 chat-btn"
+                                >
+
+                                    💬 Chat with Customer
+
+                                </a>
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                <% }) %>
+
+
+            </div>
+
+
+        <% } %>
+
+
+    </main>
+
+
+
+    <!-- ========================= -->
+    <!-- FOOTER -->
+    <!-- ========================= -->
+
+    <footer class="bg-dark text-white text-center py-3">
+
+        <p class="mb-0">
+            © 2026 FoodieHub. All rights reserved.
+        </p>
+
+    </footer>
 
 
 </body>

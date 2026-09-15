@@ -328,95 +328,6 @@ app.post(
 // HOME
 // ==================================================
 
-app.get(
-    "/",
-    async (req, res) => {
-
-        try {
-
-            const search =
-                req.query.search || "";
-
-            const category =
-                req.query.category;
-
-            const sort =
-                req.query.sort;
-
-            const query = {
-
-                name: {
-                    $regex: search,
-                    $options: "i"
-                }
-
-            };
-
-            if (
-                category &&
-                category.trim() !== ""
-            ) {
-
-                query.category =
-                    category;
-
-            }
-
-            const foods =
-                await Food.find(query)
-                    .populate(
-                        "restaurant",
-                        "name"
-                    )
-                    .sort(sort);
-
-            // Check whether the logged-in user is an admin
-            let adminUser = false;
-
-            const token =
-                req.cookies?.token;
-
-            if (token) {
-
-                try {
-
-                    const decoded =
-                        jwt.verify(
-                            token,
-                            process.env.JWT_SECRET
-                        );
-
-                    adminUser =
-                        decoded.role === "admin";
-
-                } catch (error) {
-
-                    adminUser = false;
-
-                }
-
-            }
-
-            res.render(
-                "home",
-                {
-                    foods,
-                    isAdmin: adminUser
-                }
-            );
-
-        } catch (err) {
-
-            console.log(err);
-
-            res.status(500).send(
-                "Server Error"
-            );
-
-        }
-
-    }
-);
 
 // ==================================================
 // SOCKET AUTHENTICATION
@@ -807,75 +718,204 @@ app.use(
 // HOME
 // ==================================================
 
+// ==========================================
+// HOME / STOREFRONT
+// ==========================================
+// ==========================================
+// ADMIN FOOD MANAGEMENT
+// ==========================================
+
+// EDIT FOOD PAGE
 app.get(
-    "/",
+    "/admin/foods/:id/edit",
+    verifyToken,
+    isAdmin,
     async (req, res) => {
 
         try {
 
-            const search =
-                req.query.search || "";
+            const food = await Food.findById(req.params.id);
 
-
-            const category =
-                req.query.category;
-
-
-            const sort =
-                req.query.sort;
-
-
-            const query = {
-
-                name: {
-                    $regex: search,
-                    $options: "i"
-                }
-
-            };
-
-
-            if (
-                category &&
-                category.trim() !== ""
-            ) {
-
-                query.category =
-                    category;
-
+            if (!food) {
+                return res.status(404).send("Food not found");
             }
 
+            res.render("editFood", {
+                food
+            });
 
-            const foods =
-                await Food.find(query)
-                    .populate(
-                        "restaurant",
-                        "name"
-                    )
-                    .sort(sort);
+        } catch (error) {
 
+            console.log(error);
 
-            res.render(
-                "home",
-                {
-                    foods
-                }
-            );
-
-        } catch (err) {
-
-            console.log(err);
-
-            res.status(500).send(
-                "Server Error"
-            );
-
+            res.status(500).send("Server Error");
         }
-
     }
 );
 
 
+// UPDATE FOOD
+app.post(
+    "/admin/foods/:id/update",
+    verifyToken,
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            await Food.findByIdAndUpdate(
+                req.params.id,
+                {
+                    name: req.body.name,
+                    price: req.body.price,
+                    category: req.body.category,
+                    image: req.body.image
+                },
+                {
+                    new: true
+                }
+            );
+
+            res.redirect("/restaurant-dashboard");
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).send("Could not update food");
+        }
+    }
+);
+
+
+// DELETE FOOD
+app.post(
+    "/admin/foods/:id/delete",
+    verifyToken,
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            await Food.findByIdAndDelete(req.params.id);
+
+            res.redirect("/restaurant-dashboard");
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).send("Could not delete food");
+        }
+    }
+);
+app.get("/", async (req, res) => {
+    try {
+
+        const search = req.query.search || "";
+        const category = req.query.category || "";
+        const minPrice = req.query.minPrice;
+        const maxPrice = req.query.maxPrice;
+        const sort = req.query.sort || "";
+
+        const query = {};
+
+        // ================= SEARCH =================
+
+        if (search.trim() !== "") {
+            query.name = {
+                $regex: search.trim(),
+                $options: "i"
+            };
+        }
+
+        // ================= CATEGORY =================
+
+        if (category.trim() !== "") {
+            query.category = category.trim();
+        }
+
+        // ================= PRICE FILTER =================
+
+        if (minPrice || maxPrice) {
+
+            query.price = {};
+
+            if (minPrice) {
+                query.price.$gte = Number(minPrice);
+            }
+
+            if (maxPrice) {
+                query.price.$lte = Number(maxPrice);
+            }
+        }
+
+        // ================= SORT =================
+
+        let sortOption = {};
+
+        if (sort === "price_asc") {
+            sortOption.price = 1;
+        } 
+        else if (sort === "price_desc") {
+            sortOption.price = -1;
+        } 
+        else if (sort === "name_asc") {
+            sortOption.name = 1;
+        }
+
+        // ================= GET FOODS =================
+
+        const foods = await Food.find(query)
+            .populate("restaurant", "name")
+            .sort(sortOption);
+
+        // ================= CHECK LOGIN =================
+
+        let isLoggedIn = false;
+        let isAdminUser = false;
+
+        const token = req.cookies.token;
+
+        if (token) {
+
+            try {
+
+                const decoded = jwt.verify(
+                    token,
+                    process.env.JWT_SECRET
+                );
+
+                isLoggedIn = true;
+
+                if (decoded.role === "admin") {
+                    isAdminUser = true;
+                }
+
+            } catch (error) {
+
+                // Invalid/expired token
+                isLoggedIn = false;
+                isAdminUser = false;
+
+            }
+        }
+
+        // ================= RENDER HOME =================
+
+        res.render("home", {
+            foods,
+            isLoggedIn,
+            isAdminUser
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.status(500).send("Server Error");
+    }
+});
 // ==================================================
 // LOGIN / REGISTER PAGES
 // ==================================================
@@ -1115,7 +1155,6 @@ app.post(
 // ==================================================
 // REGISTER
 // ==================================================
-
 app.post(
     "/register",
     async (req, res) => {
@@ -1127,7 +1166,6 @@ app.post(
                     req.body.password,
                     10
                 );
-
 
             await User.create({
 
@@ -1141,14 +1179,12 @@ app.post(
                     hashedPassword,
 
                 role:
-                    "customer",
+                    req.body.role,
 
                 restaurant:
-                    req.body.restaurantId ||
-                    null
+                    req.body.restaurantId || null
 
             });
-
 
             res.send(
                 "Registration Successful. Please login."
@@ -1166,7 +1202,6 @@ app.post(
 
     }
 );
-
 
 // ==================================================
 // LOGIN
@@ -1365,6 +1400,14 @@ app.get(
             }
 
 
+            // Get foods belonging to this restaurant
+            const foods =
+                await Food.find({
+                    restaurant:
+                        restaurant._id
+                });
+
+
             const orders =
                 await Order.find({
                     restaurant:
@@ -1376,7 +1419,7 @@ app.get(
                 )
                 .populate(
                     "food",
-                    "name price"
+                    "name price image"
                 )
                 .sort({
                     createdAt: -1
@@ -1387,6 +1430,7 @@ app.get(
                 "restaurantDashboard",
                 {
                     restaurant,
+                    foods,
                     orders
                 }
             );
@@ -1477,8 +1521,7 @@ app.get(
 // ==================================================
 // UPDATE ORDER STATUS - API
 // ==================================================
-
-app.patch(
+app.post(
     "/orders/:orderId/status",
     verifyToken,
     isAdmin,
@@ -1737,7 +1780,345 @@ app.post(
     }
 );
 
+app.get(
+    "/restaurant/dashboard",
+    verifyToken,
+    isAdmin,
+    async (req, res) => {
+        try {
 
+            const user = await User.findById(req.user.id);
+
+            if (!user) {
+                return res.status(404).send("User not found");
+            }
+
+            let foods = [];
+            let orders = [];
+            let restaurant = null;
+
+            // Get admin's restaurant
+            if (user.restaurant) {
+
+                restaurant = await Restaurant.findById(
+                    user.restaurant
+                );
+
+                // Get restaurant foods
+                foods = await Food.find({
+                    restaurant: user.restaurant
+                });
+
+                // Get food IDs
+                const foodIds = foods.map(
+                    food => food._id
+                );
+
+                // Get restaurant orders
+                orders = await Order.find({
+                    food: {
+                        $in: foodIds
+                    }
+                })
+                .populate("user", "name email")
+                .populate("food", "name price image");
+
+            }
+
+            res.render("restaurantDashboard", {
+                foods,
+                orders,
+                restaurant
+
+            });
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).send("Server Error");
+        }
+    }
+);
+
+// ==========================================
+// ADMIN FOOD MANAGEMENT
+// ==========================================
+
+// EDIT FOOD PAGE
+app.get(
+    "/admin/foods/:id/edit",
+    verifyToken,
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            const food = await Food.findById(req.params.id);
+
+            if (!food) {
+                return res.status(404).send("Food not found");
+            }
+
+            res.render("editFood", {
+                food
+            });
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).send("Server Error");
+        }
+    }
+);
+
+
+// UPDATE FOOD
+app.post(
+    "/admin/foods/:id/update",
+    verifyToken,
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            await Food.findByIdAndUpdate(
+                req.params.id,
+                {
+                    name: req.body.name,
+                    price: req.body.price,
+                    category: req.body.category,
+                    image: req.body.image
+                },
+                {
+                    new: true
+                }
+            );
+
+            res.redirect("/restaurant-dashboard");
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).send("Could not update food");
+        }
+    }
+);
+
+
+// DELETE FOOD
+app.post(
+    "/admin/foods/:id/delete",
+    verifyToken,
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            await Food.findByIdAndDelete(req.params.id);
+
+            res.redirect("/restaurant-dashboard");
+
+        } catch (error) {
+
+            console.log(error);
+
+            res.status(500).send("Could not delete food");
+        }
+    }
+);
+
+
+
+// ==================================================
+// HOME PAGE
+// ==================================================
+
+app.get("/", async (req, res) => {
+
+    try {
+
+        // ================= QUERY PARAMETERS =================
+
+        const search = req.query.search || "";
+        const category = req.query.category || "";
+        const minPrice = req.query.minPrice;
+        const maxPrice = req.query.maxPrice;
+        const sort = req.query.sort || "";
+
+
+        // ================= BUILD FILTER =================
+
+        const query = {};
+
+
+        // SEARCH
+
+        if (search.trim() !== "") {
+
+            query.name = {
+                $regex: search.trim(),
+                $options: "i"
+            };
+
+        }
+
+
+        // CATEGORY
+
+        if (category.trim() !== "") {
+
+            query.category = category.trim();
+
+        }
+
+
+        // PRICE FILTER
+
+        if (minPrice || maxPrice) {
+
+            query.price = {};
+
+
+            if (minPrice) {
+
+                query.price.$gte = Number(minPrice);
+
+            }
+
+
+            if (maxPrice) {
+
+                query.price.$lte = Number(maxPrice);
+
+            }
+
+        }
+
+
+        // ================= SORT =================
+
+        let sortOption = {};
+
+
+        if (sort === "price" || sort === "price_asc") {
+
+            sortOption.price = 1;
+
+        }
+
+        else if (sort === "price_desc") {
+
+            sortOption.price = -1;
+
+        }
+
+        else if (sort === "name_asc") {
+
+            sortOption.name = 1;
+
+        }
+
+
+        // ================= GET FOODS =================
+
+        const foods = await Food.find(query)
+            .populate("restaurant", "name")
+            .sort(sortOption);
+
+
+        // ================= LOGIN / ADMIN STATUS =================
+
+        let isLoggedIn = false;
+        let isAdminUser = false;
+
+
+        const token = req.cookies.token;
+
+
+        if (token) {
+
+            try {
+
+                const decoded = jwt.verify(
+                    token,
+                    process.env.JWT_SECRET
+                );
+
+
+                isLoggedIn = true;
+
+                isAdminUser = decoded.role === "admin";
+
+            }
+
+            catch (error) {
+
+                // Invalid or expired token
+                isLoggedIn = false;
+                isAdminUser = false;
+
+            }
+
+        }
+
+
+        // ================= RENDER HOME =================
+
+        res.render("home", {
+
+            foods,
+
+            isLoggedIn,
+
+            isAdminUser
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        res.status(500).send("Server Error");
+
+    }
+
+});
+app.get(
+    "/foods/:id/edit",
+    verifyToken,
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            const food = await Food.findById(req.params.id);
+
+            if (!food) {
+                return res.status(404).send("Food not found");
+            }
+
+            const restaurants = await Restaurant.find();
+
+            res.render("editfood", {
+                food,
+                restaurants
+            });
+
+        } catch (err) {
+
+            console.log(err);
+
+            res.status(500).send("Server Error");
+
+        }
+
+    }
+);
 // ==================================================
 // RESET PASSWORD PAGE
 // ==================================================
@@ -1756,8 +2137,71 @@ app.get(
 
     }
 );
+app.post(
+    "/foods/:id/edit",
+    verifyToken,
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            const {
+                name,
+                price,
+                category,
+                restaurant
+            } = req.body;
 
 
+            await Food.findByIdAndUpdate(
+                req.params.id,
+                {
+                    name,
+                    price,
+                    category,
+                    restaurant
+                },
+                {
+                    new: true,
+                    runValidators: true
+                }
+            );
+    
+
+            res.redirect("/foods");
+
+        } catch (err) {
+
+            console.log(err);
+
+            res.status(500).send("Server Error");
+
+        }
+
+    }
+);
+app.post(
+    "/foods/:id/delete",
+    verifyToken,
+    isAdmin,
+    async (req, res) => {
+
+        try {
+
+            await Food.findByIdAndDelete(req.params.id);
+
+            res.redirect("/foods");
+
+        } catch (err) {
+
+            console.log(err);
+
+            res.status(500).send("Server Error");
+
+        }
+
+    }
+);
 // ==================================================
 // RESET PASSWORD
 // ==================================================
@@ -1947,7 +2391,34 @@ app.post(
     }
 );
 
+app.get("/restaurant-dashboard", verifyToken, async (req, res) => {
+    try {
 
+        const restaurant = await Restaurant.findOne({
+            owner: req.user.id
+        });
+
+        const orders = await Order.find({
+            restaurant: restaurant._id
+        });
+
+        const foods = await Food.find({
+            restaurant: restaurant._id
+        });
+
+        res.render("restaurantDashboard", {
+            restaurant,
+            orders,
+            foods
+        });
+
+    } catch (err) {
+
+        console.log(err);
+        res.status(500).send("Server Error");
+
+    }
+});
 // ==================================================
 // CART - VIEW
 // ==================================================

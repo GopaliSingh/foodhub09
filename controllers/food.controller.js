@@ -153,6 +153,138 @@ async function getFood(req, res) {
 }
 
 
+
+// ==========================================
+// UPDATE FOOD
+// ==========================================
+
+async function updateFood(req, res) {
+
+    try {
+
+        const {
+            name,
+            price,
+            category,
+            image,
+            restaurant
+        } = req.body;
+
+
+        const food = await Food.findByIdAndUpdate(
+
+            req.params.id,
+
+            {
+                name,
+                price,
+                category,
+                image,
+                restaurant
+            },
+
+            {
+                new: true,
+                runValidators: true
+            }
+
+        );
+
+
+        if (!food) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Food not found"
+
+            });
+
+        }
+
+
+        res.status(200).json({
+
+            success: true,
+
+            message: "Food updated successfully",
+
+            data: food
+
+        });
+
+
+    } catch (err) {
+
+        console.log(err);
+
+
+        res.status(500).json({
+
+            success: false,
+
+            message: "Server Error"
+
+        });
+
+    }
+
+}
+
+
+
+// ==========================================
+// DELETE FOOD
+// ==========================================
+
+async function deleteFood(req, res) {
+
+    try {
+
+        const food = await Food.findByIdAndDelete(
+            req.params.id
+        );
+
+
+        if (!food) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Food not found"
+
+            });
+
+        }
+
+
+        res.status(200).json({
+
+            success: true,
+
+            message: "Food deleted successfully"
+
+        });
+
+
+    } catch (err) {
+
+        console.log(err);
+
+
+        res.status(500).json({
+
+            success: false,
+
+            message: "Server Error"
+
+        });
+
+    }
+
+}
 // ==========================================
 // 4. GET RESTAURANT WITH ITS FOODS
 // ==========================================
