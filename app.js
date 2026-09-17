@@ -921,13 +921,36 @@ app.post(
 
                 });
 
+await food.save();
 
-            await food.save();
+res.send(`
+    <div style="
+        text-align: center;
+        margin-top: 100px;
+        font-family: Arial, sans-serif;
+    ">
+        <h1 style="color: #e85d04;">
+            Food Added Successfully! 🍽️
+        </h1>
 
+        <p style="font-size: 20px; color: #555;">
+            Your food item has been added successfully.
+        </p>
 
-            res.redirect(
-                "/foods"
-            );
+        <a href="/" style="
+            display: inline-block;
+            padding: 12px 24px;
+            background: #e85d04;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+        ">
+            ← Back to FoodHub
+        </a>
+    </div>
+`);
 
         } catch (err) {
 
@@ -941,8 +964,6 @@ app.post(
 
     }
 );
-
-
 // ==================================================
 // PLACE SINGLE FOOD ORDER
 // ==================================================
@@ -2895,119 +2916,7 @@ app.post(
 
     }
 );
-//AFTER ADD-RESTAURANT
-// ADD RESTAURANT
-app.post(
-    "/restaurants",
-    verifyToken,
-    isAdmin,
-    async (req, res) => {
 
-        try {
-
-            res.send(`
-                <div style="
-                    text-align: center;
-                    margin-top: 100px;
-                    font-family: Arial, sans-serif;
-                ">
-
-                    <h1 style="
-                        font-size: 36px;
-                        color: #e85d04;
-                        margin-bottom: 15px;
-                    ">
-                        Restaurant Added Successfully! 🎉
-                    </h1>
-
-                    <p style="
-                        font-size: 20px;
-                        color: #555;
-                        margin-bottom: 30px;
-                    ">
-                        Your restaurant has been added successfully.
-                    </p>
-
-                    <a href="/" style="
-                        display: inline-block;
-                        padding: 12px 24px;
-                        background-color: #e85d04;
-                        color: white;
-                        text-decoration: none;
-                        border-radius: 8px;
-                        font-size: 18px;
-                        font-weight: bold;
-                    ">
-                        ← Back to FoodHub
-                    </a>
-
-                </div>
-            `);
-
-        } catch (err) {
-
-            console.log(err);
-
-        }
-    }
-);
-
-
-// AFTER ADD-FOOD
-app.post(
-    "/add-food",
-    verifyToken,
-    isAdmin,
-    async (req, res) => {
-
-        try {
-
-            res.send(`
-                <div style="
-                    text-align: center;
-                    margin-top: 100px;
-                    font-family: Arial, sans-serif;
-                ">
-
-                    <h1 style="
-                        font-size: 36px;
-                        color: #e85d04;
-                        margin-bottom: 15px;
-                    ">
-                        Food Added Successfully! 🍽️
-                    </h1>
-
-                    <p style="
-                        font-size: 20px;
-                        color: #555;
-                        margin-bottom: 30px;
-                    ">
-                        Your food item has been added successfully.
-                    </p>
-
-                    <a href="/" style="
-                        display: inline-block;
-                        padding: 12px 24px;
-                        background-color: #e85d04;
-                        color: white;
-                        text-decoration: none;
-                        border-radius: 8px;
-                        font-size: 18px;
-                        font-weight: bold;
-                    ">
-                        ← Back to FoodHub
-                    </a>
-
-                </div>
-            `);
-
-        } catch (err) {
-
-            console.log(err);
-
-        }
-    }
-);
 
 // ==================================================
 // FOOD DELETE
