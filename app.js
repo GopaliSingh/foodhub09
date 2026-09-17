@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const connectDB = require("./config/db");
-
+const addRestaurant = require("./routes/restaurant.routes");
 const Food = require("./models/food.model");
 const Restaurant = require("./models/restaurant.model");
 const User = require("./models/user");
@@ -808,114 +808,12 @@ app.post(
             res.status(500).send("Could not delete food");
         }
     }
-);
-app.get("/", async (req, res) => {
-    try {
+); 
 
-        const search = req.query.search || "";
-        const category = req.query.category || "";
-        const minPrice = req.query.minPrice;
-        const maxPrice = req.query.maxPrice;
-        const sort = req.query.sort || "";
 
-        const query = {};
+        
+          
 
-        // ================= SEARCH =================
-
-        if (search.trim() !== "") {
-            query.name = {
-                $regex: search.trim(),
-                $options: "i"
-            };
-        }
-
-        // ================= CATEGORY =================
-
-        if (category.trim() !== "") {
-            query.category = category.trim();
-        }
-
-        // ================= PRICE FILTER =================
-
-        if (minPrice || maxPrice) {
-
-            query.price = {};
-
-            if (minPrice) {
-                query.price.$gte = Number(minPrice);
-            }
-
-            if (maxPrice) {
-                query.price.$lte = Number(maxPrice);
-            }
-        }
-
-        // ================= SORT =================
-
-        let sortOption = {};
-
-        if (sort === "price_asc") {
-            sortOption.price = 1;
-        } 
-        else if (sort === "price_desc") {
-            sortOption.price = -1;
-        } 
-        else if (sort === "name_asc") {
-            sortOption.name = 1;
-        }
-
-        // ================= GET FOODS =================
-
-        const foods = await Food.find(query)
-            .populate("restaurant", "name")
-            .sort(sortOption);
-
-        // ================= CHECK LOGIN =================
-
-        let isLoggedIn = false;
-        let isAdminUser = false;
-
-        const token = req.cookies.token;
-
-        if (token) {
-
-            try {
-
-                const decoded = jwt.verify(
-                    token,
-                    process.env.JWT_SECRET
-                );
-
-                isLoggedIn = true;
-
-                if (decoded.role === "admin") {
-                    isAdminUser = true;
-                }
-
-            } catch (error) {
-
-                // Invalid/expired token
-                isLoggedIn = false;
-                isAdminUser = false;
-
-            }
-        }
-
-        // ================= RENDER HOME =================
-
-        res.render("home", {
-            foods,
-            isLoggedIn,
-            isAdminUser
-        });
-
-    } catch (err) {
-
-        console.log(err);
-
-        res.status(500).send("Server Error");
-    }
-});
 // ==================================================
 // LOGIN / REGISTER PAGES
 // ==================================================
@@ -1186,9 +1084,42 @@ app.post(
 
             });
 
-            res.send(
-                "Registration Successful. Please login."
-            );
+         res.send(`
+    <div style="
+        text-align: center;
+        margin-top: 100px;
+        font-size: 32px;
+        font-weight: bold;
+        color: #e85d04;
+        font-family: Arial, sans-serif;
+    ">
+        Registration Successful! 🎉
+        <br><br>
+
+        <span style="
+            font-size: 20px;
+            color: #555;
+            font-weight: normal;
+        ">
+            Please login.
+        </span>
+
+        <br><br>
+
+        <a href="/" style="
+            display: inline-block;
+            padding: 12px 20px;
+            background: #e85d04;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 18px;
+        ">
+            ← Back to FoodHub
+        </a>
+    </div>
+`);
+
 
         } catch (error) {
 
