@@ -2898,7 +2898,7 @@ app.post(
 //AFTER ADD-RESTAURANT
 // ADD RESTAURANT
 app.post(
-    "/add-restaurant",
+    "/restaurants",
     verifyToken,
     isAdmin,
     async (req, res) => {
